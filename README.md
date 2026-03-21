@@ -1,243 +1,293 @@
-📊 HR Analytics Project – Employee Attrition Prediction
-📌 1. Tổng quan dự án
+# 🚀 HR Analytics Project – Employee Attrition Prediction
 
-Trong doanh nghiệp, nghỉ việc (Attrition) là một vấn đề lớn vì:
+## 📌 1. Giới thiệu
 
-Tốn chi phí tuyển dụng lại
-Mất nhân sự có kinh nghiệm
-Ảnh hưởng đến hiệu suất tổ chức
+Dự án này xây dựng một **pipeline Machine Learning hoàn chỉnh** nhằm:
 
-👉 Vì vậy, dự án này tập trung vào:
+* 🔍 Phân tích hành vi nhân viên
+* 🎯 Dự đoán khả năng nghỉ việc (Attrition)
+* 📊 Trích xuất insight phục vụ quyết định nhân sự
 
-🎯 Mục tiêu chính:
-Phân tích nguyên nhân khiến nhân viên nghỉ việc
-Dự đoán ai có nguy cơ nghỉ
-Đưa ra gợi ý chính sách HR dựa trên dữ liệu
-📂 2. Dataset & Bài toán
-Dataset: HR Analytics (Kaggle)
-Kích thước: 1480 nhân viên × 38 thuộc tính
-📊 Phân bố mục tiêu:
-1242 Stay (~84%)
-238 Leave (~16%)
+👉 Đây không chỉ là bài toán dự đoán, mà là **hệ thống hỗ trợ ra quyết định cho HR**.
 
-👉 Đây là bài toán mất cân bằng dữ liệu (imbalanced classification)
-→ Nếu không xử lý, model sẽ thiên về dự đoán “Stay”
+---
 
-🧹 3. Data Preprocessing
-Các bước xử lý:
-Làm sạch dữ liệu
-Không có missing lớn → giữ nguyên cấu trúc
-Encode dữ liệu
-Convert categorical → số (LabelEncoder)
-Chuẩn hóa
-StandardScaler giúp model học tốt hơn
-Xử lý imbalance
-Dùng class_weight = balanced
+## 📊 2. Dataset
 
-👉 Ý nghĩa:
+* Nguồn: Kaggle HR Analytics
+* Kích thước: **1480 × 38**
+* Sau xử lý: **1480 × 31**
 
-Model “quan tâm hơn” đến nhóm Leave (thiểu số)
-⚙️ 4. Feature Engineering (Rất quan trọng)
+### Phân bố Attrition:
 
-Thay vì dùng raw data, bạn đã tạo thêm 6 đặc trưng mới:
+* Stay (No): 1242 (84%)
+* Leave (Yes): 238 (16%)
 
-📌 Ví dụ:
-IncomePerYearExp → đo hiệu quả lương theo kinh nghiệm
-PromotionGap → số năm chưa được thăng chức
-SatisfactionIndex → tổng hợp mức độ hài lòng
+⚠️ Đây là bài toán **mất cân bằng dữ liệu (imbalanced classification)**
 
-👉 Đây là bước tăng sức mạnh model mạnh nhất trong pipeline
+---
 
-🔍 Feature Selection (SelectKBest)
+## ⚙️ 3. Data Preprocessing
 
-Chọn ra 20 features quan trọng nhất
+* Xử lý missing values
+* Encode categorical (LabelEncoder)
+* Scale dữ liệu (StandardScaler)
+* Xử lý imbalance:
 
-🔥 Top features:
-OverTime (quan trọng nhất)
-TotalWorkingYears
-JobLevel
-MonthlyIncome
-SatisfactionIndex
+  * `class_weight='balanced'`
 
-👉 Ý nghĩa:
+---
 
-Giảm nhiễu
-Tăng tốc model
-Tăng độ chính xác
-📊 5. EDA – Phân tích dữ liệu
-Insight chính:
-🔥 OverTime = yếu tố mạnh nhất
-💰 Lương thấp → nghỉ cao
-👴 Tuổi lớn → ít nghỉ hơn
+## 🧠 4. Feature Engineering
 
-👉 Đây là insight thực tế rất giá trị cho HR
+Tạo thêm 6 đặc trưng mới:
 
-🔗 6. Association Rules (Luật kết hợp)
-Mục tiêu:
+* IncomePerYearExp
+* CompanyTenureRatio
+* SatisfactionIndex
+* PromotionGap
+* IncomeSalaryDiff
+* ExternalExperience
 
-Tìm pattern dạng:
+👉 Mục tiêu: **biến dữ liệu thô thành insight có ý nghĩa business**
 
-“Nếu A xảy ra → khả năng cao B xảy ra”
+---
 
-📌 Ví dụ thực tế:
-OverTime_No → Stay (Confidence ~0.896)
-Income cao → Stay
+## 🔍 5. Feature Selection
 
-👉 Diễn giải:
+Sử dụng **SelectKBest (ANOVA F-test)**
 
-Nhân viên không làm OT gần như chắc chắn ở lại
-Lương cao → giữ chân tốt
-🧠 Ý nghĩa cho HR:
-Giảm OT = giảm nghỉ việc
-Tăng lương hợp lý = giữ người
-🤖 7. Classification (Dự đoán nghỉ việc)
-🎯 Mục tiêu:
+### Top features:
 
-Dự đoán:
-
-Nhân viên này có nghỉ không?
-
-🔹 Logistic Regression
-AUC: 0.85
-Recall (Leave): 0.79
-
-👉 Rất tốt để:
-
-Phát hiện người có nguy cơ nghỉ
-🌲 Random Forest
-AUC: 0.86
-Recall thấp hơn
-
-👉 Học pattern tốt nhưng:
-
-Bỏ sót nhiều người nghỉ
-⚡ Gradient Boosting (BEST)
-AUC: 0.87
-Accuracy cao nhất
-
-👉 Model tốt nhất overall
-
-📌 Kết luận:
-Model	Dùng khi
-Logistic	Cần bắt hết người nghỉ
-GBM	Cần độ chính xác tổng thể
-📊 8. Clustering (Phân cụm nhân viên)
-Mục tiêu:
-
-Không cần label → vẫn hiểu dữ liệu
-
-Kết quả:
-4 cụm (k=4)
-Cluster 3: attrition ~22% (cao nhất)
-
-👉 Đây là:
-
-“Nhóm nhân viên rủi ro cao”
-
-🧠 Ý nghĩa:
-
-HR có thể:
-
-Target đúng nhóm nguy hiểm
-Không cần xử lý toàn bộ nhân viên
-🧠 9. Explainability (Giải thích model)
-Top yếu tố ảnh hưởng:
-OverTime
-StockOptionLevel
-SatisfactionIndex
-MonthlyIncome
-🔥 Insight:
-OT ↑ → nghỉ ↑
-Stock option ↑ → nghỉ ↓
-
-👉 Đây là phần rất quan trọng khi demo
-(vì business cần hiểu model)
-
-🔄 10. Semi-Supervised Learning
-Vấn đề thực tế:
-HR không thể label toàn bộ dữ liệu (tốn chi phí)
-Giải pháp:
-Dùng ít label + tận dụng data chưa label
-📊 Kết quả:
-Label %	Best Model	AUC
-10%	Label Spread	0.71
-20%	Label Spread	0.76
-50%	Label Spread	0.81
-❌ Self-Training:
-Luôn kém hơn
-
-👉 Vì:
-
-Data imbalance → bias
-✅ Kết luận:
-≥20% label → dùng được
-≥50% → gần model full
-🧾 11. Regression (Dự đoán Satisfaction)
-Mục tiêu:
-
-Dự đoán:
-
-Mức độ hài lòng (1–4)
-
-⚠️ Data Leakage
-
-Phát hiện:
-
-SatisfactionIndex → chứa thông tin target
-
-👉 Đã loại bỏ → đúng chuẩn ML
-
-📊 Kết quả:
-Best: Lasso
-MAE ≈ 1.0
+* 🔥 OverTime
+* 🔥 TotalWorkingYears
+* 🔥 JobLevel
+* 🔥 YearsInCurrentRole
+* 🔥 SatisfactionIndex
+* 🔥 MonthlyIncome
 
 👉 Insight:
 
-Rất khó dự đoán satisfaction
-→ yếu tố này mang tính cảm xúc
-🏁 12. Tổng kết Pipeline
-🚀 Full pipeline:
-Data
-Preprocessing
-Feature Engineering
-EDA
-Association Rules
-Clustering
-Classification
-Explainability
-Semi-supervised
-Regression
-📊 📦 Output
-12 hình ảnh:
-fig0 → fig11
-💡 Business Insights (QUAN TRỌNG NHẤT)
-🔥 1. OverTime là yếu tố nguy hiểm nhất
+> Nhân viên làm OT nhiều + ít thăng tiến → nguy cơ nghỉ việc cao
 
-→ Giảm OT = giảm nghỉ việc
+---
 
-💰 2. Lương & Stock Option
+## 🧩 6. Clustering – Phân cụm nhân viên
 
-→ Công cụ giữ người hiệu quả
+Sử dụng **K-Means (k=4)**
 
-👥 3. Phân nhóm nhân viên
+### Kết quả:
 
-→ Tập trung vào nhóm risk cao (Cluster 3)
+| Cluster | Attrition Rate |
+| ------- | -------------- |
+| 0       | 10.5%          |
+| 1       | 11.1%          |
+| 2       | 9.0%           |
+| 3       | 🔥 22.0%       |
 
-🧠 4. Thiếu dữ liệu vẫn làm được ML
+👉 Insight:
 
-→ Semi-supervised giúp tiết kiệm chi phí
+> Cluster 3 là nhóm rủi ro cao → cần can thiệp sớm
 
-🚀 Hướng phát triển
-XGBoost / LightGBM
-Dashboard HR
-Deploy web app
-SHAP explainability
-✅ KẾT LUẬN
+---
 
-👉 Project này không chỉ là ML mà còn:
+## 🤖 7. Classification – Dự đoán nghỉ việc
 
-✔️ Phân tích dữ liệu
-✔️ Dự đoán
-✔️ Giải thích
-✔️ Đề xuất chính sách
+### So sánh mô hình:
+
+| Model               | AUC    | F1 (Leave) |
+| ------------------- | ------ | ---------- |
+| Logistic Regression | 0.8503 | ✅ **0.51** |
+| Random Forest       | 0.8616 | 0.39       |
+| Gradient Boosting   | 0.8716 | 0.41       |
+
+---
+
+### 🎯 Kết luận:
+
+* GBM có AUC cao nhất
+* Nhưng Logistic Regression có **F1 tốt nhất cho lớp Leave**
+
+👉 Chọn **Logistic Regression**
+
+---
+
+## ⚙️ Hyperparameters
+
+* Logistic Regression:
+
+  * C=1.0, max_iter=1000
+* Random Forest:
+
+  * n_estimators=200, max_depth=8
+* Gradient Boosting:
+
+  * learning_rate=0.05, n_estimators=200
+
+---
+
+## 🧠 8. Model Explainability
+
+Sử dụng **Permutation Importance**
+
+### Top Features:
+
+1. 🔥 OverTime
+2. StockOptionLevel
+3. SatisfactionIndex
+4. MonthlyIncome
+5. Age
+
+---
+
+### 🎯 Insight quan trọng:
+
+> OverTime là yếu tố ảnh hưởng mạnh nhất đến nghỉ việc
+
+---
+
+## 🔗 9. Association Rules (Apriori)
+
+* 1480 transactions × 26 items
+* 231 frequent itemsets
+* 97 rules
+
+### Ví dụ:
+
+* OT cao + lương thấp → nghỉ việc
+* Lương cao → ở lại
+
+---
+
+### 🎯 Ứng dụng:
+
+* Rule-based alert system
+* Hỗ trợ HR ra quyết định nhanh
+
+---
+
+## 🔬 10. Semi-Supervised Learning
+
+So sánh:
+
+| Method          | Hiệu quả |
+| --------------- | -------- |
+| Self-Training   | ❌ kém    |
+| Label Spreading | ✅ tốt    |
+
+---
+
+### 🎯 Insight:
+
+* Self-training bị bias do imbalance
+* Label Spreading ổn định hơn
+
+---
+
+### 📌 Khuyến nghị:
+
+| % Label | Hành động     |
+| ------- | ------------- |
+| 5%      | chỉ cảnh báo  |
+| 10%     | khảo sát thêm |
+| 20%     | can thiệp     |
+| 50%     | deploy        |
+
+---
+
+## 📉 11. Regression – Job Satisfaction
+
+* Model: Linear / Ridge / Lasso
+* Kết quả: R² ≈ 0
+
+👉 Insight:
+
+> Job Satisfaction khó dự đoán → phụ thuộc yếu tố ẩn
+
+---
+
+## 🚨 12. Data Leakage
+
+Phát hiện:
+
+* SatisfactionIndex gây leakage
+
+👉 Đã loại bỏ để đảm bảo tính chính xác
+
+---
+
+## 📊 13. Kết quả trực quan
+
+Project sinh ra 12 biểu đồ:
+
+* fig0 → Feature Engineering
+* fig1 → EDA
+* fig2 → Correlation
+* fig3 → Clustering
+* fig4 → Model Evaluation
+* fig5 → Hyperparameters
+* fig6 → Feature Importance
+* fig7 → Semi-supervised
+* fig8 → Association Rules
+* fig9 → Explainability
+* fig10 → Regression
+* fig11 → Leakage Check
+
+---
+
+## 💡 14. Insight Business
+
+Nhân viên dễ nghỉ việc khi:
+
+* 🔥 Làm thêm giờ nhiều
+* 💰 Lương thấp
+* 📉 Ít thăng tiến
+* 😞 Satisfaction thấp
+
+---
+
+## 🎯 15. Ứng dụng thực tế
+
+* Dự đoán nhân viên nghỉ việc
+* Dashboard HR
+* Hệ thống cảnh báo sớm
+* Cá nhân hóa giữ chân nhân viên
+
+---
+
+## 🛠️ 16. Tech Stack
+
+* Python
+* Pandas, NumPy
+* Scikit-learn
+* Matplotlib, Seaborn
+
+---
+
+## ▶️ 17. Cách chạy project
+
+```bash
+pip install -r requirements.txt
+python hr_pipeline.py
+```
+
+---
+
+## 📌 18. Kết luận
+
+Đây là một hệ thống:
+
+* ✅ Phân tích dữ liệu
+* ✅ Dự đoán
+* ✅ Giải thích
+* ✅ Hỗ trợ quyết định
+
+👉 Có thể mở rộng thành:
+
+* Dashboard (Power BI / Streamlit)
+* Web App
+* HR Decision System
+
+---
+
 
