@@ -27,22 +27,19 @@ Dự án xây dựng một **pipeline Machine Learning end-to-end** nhằm phân
 - Leave (Yes): 238 (16%)
 
 ⚠️ Bài toán **mất cân bằng dữ liệu (imbalanced classification)**  
-→ Cần xử lý đặc biệt khi train model
 
 ---
 
 ## ⚙️ 3. Data Preprocessing
 
-Các bước xử lý:
-
-- Xử lý missing values
-- Encode categorical (LabelEncoder)
-- Chuẩn hóa dữ liệu (StandardScaler)
+- Xử lý missing values  
+- Encode categorical (LabelEncoder)  
+- Chuẩn hóa dữ liệu (StandardScaler)  
 - Xử lý imbalance:
 
 ```python
 class_weight = 'balanced'
-4. Feature Engineering
+🧠 4. Feature Engineering
 
 Tạo thêm 6 đặc trưng mới:
 
@@ -62,6 +59,7 @@ ExternalExperience
 Sử dụng SelectKBest (ANOVA F-test)
 
 🔥 Top features:
+
 OverTime
 TotalWorkingYears
 JobLevel
@@ -86,6 +84,9 @@ Cluster	Attrition Rate
 1	11.1%
 2	9.0%
 3	🔥 22.0%
+
+📊 Visualization:
+
 🎯 Insight:
 
 Cluster 3 là nhóm rủi ro cao → cần ưu tiên giữ chân
@@ -98,78 +99,102 @@ Model	AUC	F1 (Leave)
 Logistic Regression	0.8503	✅ 0.51
 Random Forest	0.8616	0.39
 Gradient Boosting	0.8716	0.41
+
+📊 Evaluation:
+
 🎯 Kết luận:
+
 GBM có AUC cao nhất
 Logistic Regression có F1 tốt nhất cho lớp Leave
 
-👉 Chọn Logistic Regression (ưu tiên phát hiện người nghỉ việc)
+👉 Chọn Logistic Regression
 
 ⚙️ 8. Hyperparameters
+Logistic Regression: C=1.0, max_iter=1000
+Random Forest: n_estimators=200, max_depth=8
+Gradient Boosting: learning_rate=0.05, n_estimators=200
 
-Logistic Regression: C=1.0
-Random Forest: n_estimators=200
-Gradient Boosting: learning_rate=0.05
+📊 Visualization:
+
 🧠 9. Model Explainability
 
 📊 Feature Importance:
 
 🔥 Top features:
+
 OverTime
 StockOptionLevel
 SatisfactionIndex
 MonthlyIncome
 Age
+
 🎯 Insight:
 
-OverTime là yếu tố ảnh hưởng mạnh nhất đến nghỉ việc
+OverTime là yếu tố ảnh hưởng mạnh nhất
 
 🔗 10. Association Rules (Apriori)
 
-📊 Kết quả:
+📊 Visualization:
 
-🔥 Ví dụ luật:
+🔥 Ví dụ:
+
 OT cao + lương thấp → nghỉ việc
 Lương cao → ở lại
+
 🎯 Ứng dụng:
+
 Rule-based alert system
-Hỗ trợ HR ra quyết định nhanh
+Hỗ trợ HR quyết định
 🔬 11. Semi-Supervised Learning
 
-📊 Kết quả:
+📊 Visualization:
 
 Method	Hiệu quả
 Self-Training	❌
 Label Spreading	✅
+
 🎯 Insight:
-Self-training bị bias do imbalance
+
+Self-training bị bias
 Label Spreading ổn định hơn
-📌 Khuyến nghị:
-% Label	Hành động
-5%	chỉ cảnh báo
-10%	khảo sát thêm
-20%	can thiệp
-50%	deploy
 📉 12. Regression – Job Satisfaction
+
+📊 Visualization:
 
 📊 Kết quả:
 
 R² ≈ 0
+
 🎯 Insight:
 
 Job Satisfaction khó dự đoán → phụ thuộc yếu tố ẩn
 
 🚨 13. Data Leakage
 
-📊 Kiểm tra:
+📊 Visualization:
 
-Phát hiện: SatisfactionIndex
+Phát hiện:
 
-👉 Đã loại bỏ để tránh sai lệch mô hình
+SatisfactionIndex gây leakage
+
+👉 Đã loại bỏ để đảm bảo tính chính xác
 
 📊 14. Tổng hợp biểu đồ
 
-Project tạo 12 biểu đồ (fig0 → fig11)
+Project tạo 12 biểu đồ:
 
+fig0 → Feature Engineering
+fig1 → EDA
+fig2 → Correlation
+fig3 → Clustering
+fig4 → Model Evaluation
+fig5 → Hyperparameters
+fig6 → Feature Importance
+fig7 → Semi-supervised
+fig8 → Association Rules
+fig9 → Explainability
+fig10 → Regression
+fig11 → Leakage
 💡 15. Insight Business
 
 Nhân viên dễ nghỉ việc khi:
@@ -188,7 +213,7 @@ Python
 Pandas, NumPy
 Scikit-learn
 Matplotlib, Seaborn
-▶️ 18. Cách chạy
+▶️ 18. Cách chạy project
 pip install -r requirements.txt
 python hr_pipeline.py
 📌 19. Kết luận
