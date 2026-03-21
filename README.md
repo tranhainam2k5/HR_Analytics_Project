@@ -23,10 +23,12 @@ Dự án xây dựng một **pipeline Machine Learning end-to-end** nhằm phân
 
 ### 📈 Phân bố Attrition:
 
-- Stay (No): 1242 (84%)
-- Leave (Yes): 238 (16%)
+| Label | Count | % |
+|-------|-------|---|
+| Stay (No) | 1242 | 84% |
+| Leave (Yes) | 238 | 16% |
 
-⚠️ Bài toán **mất cân bằng dữ liệu (imbalanced classification)**  
+⚠️ Bài toán **mất cân bằng dữ liệu (imbalanced classification)**
 
 ---
 
@@ -39,194 +41,238 @@ Dự án xây dựng một **pipeline Machine Learning end-to-end** nhằm phân
 
 ```python
 class_weight = 'balanced'
-🧠 4. Feature Engineering
+```
+
+---
+
+## 🧠 4. Feature Engineering
 
 Tạo thêm 6 đặc trưng mới:
 
-IncomePerYearExp
-CompanyTenureRatio
-SatisfactionIndex
-PromotionGap
-IncomeSalaryDiff
-ExternalExperience
+| Feature | Mô tả |
+|---------|-------|
+| `IncomePerYearExp` | Thu nhập theo năm kinh nghiệm |
+| `CompanyTenureRatio` | Tỷ lệ thâm niên công ty |
+| `SatisfactionIndex` | Chỉ số hài lòng tổng hợp |
+| `PromotionGap` | Khoảng cách thăng tiến |
+| `IncomeSalaryDiff` | Chênh lệch thu nhập |
+| `ExternalExperience` | Kinh nghiệm bên ngoài |
 
-📊 Minh họa:
+![Feature Engineering](fig0_feature_engineering.png)
 
 👉 Mục tiêu: biến dữ liệu thô → insight có ý nghĩa business
 
-🔍 5. Feature Selection
+---
 
-Sử dụng SelectKBest (ANOVA F-test)
+## 🔍 5. Feature Selection
 
-🔥 Top features:
+Sử dụng **SelectKBest (ANOVA F-test)**
 
-OverTime
-TotalWorkingYears
-JobLevel
-YearsInCurrentRole
-SatisfactionIndex
-MonthlyIncome
+### 🔥 Top features:
+- OverTime
+- TotalWorkingYears
+- JobLevel
+- YearsInCurrentRole
+- SatisfactionIndex
+- MonthlyIncome
 
-📊 Correlation:
+![EDA](fig1_eda.png)
 
-🎯 Insight:
+![Correlation](fig2_correlation.png)
 
-Nhân viên làm OT nhiều + ít thăng tiến → nguy cơ nghỉ việc cao
+### 🎯 Insight:
+> Nhân viên làm OT nhiều + ít thăng tiến → nguy cơ nghỉ việc cao
 
-🧩 6. Clustering – Phân cụm nhân viên
+---
 
-Sử dụng K-Means (k=4)
+## 🧩 6. Clustering – Phân cụm nhân viên
 
-📊 Kết quả:
+Sử dụng **K-Means (k=4)**
 
-Cluster	Attrition Rate
-0	10.5%
-1	11.1%
-2	9.0%
-3	🔥 22.0%
+### 📊 Kết quả:
 
-📊 Visualization:
+| Cluster | Attrition Rate |
+|---------|---------------|
+| 0 | 10.5% |
+| 1 | 11.1% |
+| 2 | 9.0% |
+| 3 | 🔥 22.0% |
 
-🎯 Insight:
+![Clustering](fig3_clustering.png)
 
-Cluster 3 là nhóm rủi ro cao → cần ưu tiên giữ chân
+### 🎯 Insight:
+> **Cluster 3** là nhóm rủi ro cao → cần ưu tiên giữ chân
 
-🤖 7. Classification – Dự đoán nghỉ việc
+---
 
-📊 So sánh mô hình:
+## 🤖 7. Classification – Dự đoán nghỉ việc
 
-Model	AUC	F1 (Leave)
-Logistic Regression	0.8503	✅ 0.51
-Random Forest	0.8616	0.39
-Gradient Boosting	0.8716	0.41
+### 📊 So sánh mô hình:
 
-📊 Evaluation:
+| Model | AUC | F1 (Leave) |
+|-------|-----|------------|
+| Logistic Regression | 0.8503 | ✅ **0.51** |
+| Random Forest | 0.8616 | 0.39 |
+| Gradient Boosting | **0.8716** | 0.41 |
 
-🎯 Kết luận:
+![Model Evaluation](fig4_model_eval.png)
 
-GBM có AUC cao nhất
-Logistic Regression có F1 tốt nhất cho lớp Leave
+### 🎯 Kết luận:
+- GBM có **AUC cao nhất**
+- Logistic Regression có **F1 tốt nhất** cho lớp Leave
 
-👉 Chọn Logistic Regression
+👉 **Chọn Logistic Regression**
 
-⚙️ 8. Hyperparameters
-Logistic Regression: C=1.0, max_iter=1000
-Random Forest: n_estimators=200, max_depth=8
-Gradient Boosting: learning_rate=0.05, n_estimators=200
+---
 
-📊 Visualization:
+## ⚙️ 8. Hyperparameters
 
-🧠 9. Model Explainability
+| Model | Params |
+|-------|--------|
+| Logistic Regression | C=1.0, max_iter=1000 |
+| Random Forest | n_estimators=200, max_depth=8 |
+| Gradient Boosting | learning_rate=0.05, n_estimators=200 |
 
-📊 Feature Importance:
+![Hyperparameters](fig5_hyperparams.png)
 
-🔥 Top features:
+---
 
-OverTime
-StockOptionLevel
-SatisfactionIndex
-MonthlyIncome
-Age
+## 🧠 9. Model Explainability
 
-🎯 Insight:
+![Feature Importance](fig6_feature_importance.png)
 
-OverTime là yếu tố ảnh hưởng mạnh nhất
+### 🔥 Top features:
+1. OverTime
+2. StockOptionLevel
+3. SatisfactionIndex
+4. MonthlyIncome
+5. Age
 
-🔗 10. Association Rules (Apriori)
+### 🎯 Insight:
+> **OverTime** là yếu tố ảnh hưởng mạnh nhất đến nghỉ việc
 
-📊 Visualization:
+---
 
-🔥 Ví dụ:
+## 🔗 10. Association Rules (Apriori)
 
-OT cao + lương thấp → nghỉ việc
-Lương cao → ở lại
+![Association Rules](fig8_association_rules.png)
 
-🎯 Ứng dụng:
+### 🔥 Ví dụ rules:
+- `OT cao + lương thấp` → **nghỉ việc**
+- `Lương cao` → **ở lại**
 
-Rule-based alert system
-Hỗ trợ HR quyết định
-🔬 11. Semi-Supervised Learning
+### 🎯 Ứng dụng:
+- Rule-based alert system
+- Hỗ trợ HR quyết định
 
-📊 Visualization:
+---
 
-Method	Hiệu quả
-Self-Training	❌
-Label Spreading	✅
+## 🔬 11. Semi-Supervised Learning
 
-🎯 Insight:
+![Semi-Supervised](fig7_semi_supervised.png)
 
-Self-training bị bias
-Label Spreading ổn định hơn
-📉 12. Regression – Job Satisfaction
+| Method | Hiệu quả |
+|--------|----------|
+| Self-Training | ❌ Bị bias |
+| Label Spreading | ✅ Ổn định hơn |
 
-📊 Visualization:
+---
 
-📊 Kết quả:
+## 📉 12. Regression – Job Satisfaction
 
-R² ≈ 0
+![Regression](fig10_regression.png)
 
-🎯 Insight:
+### 📊 Kết quả: R² ≈ 0
 
-Job Satisfaction khó dự đoán → phụ thuộc yếu tố ẩn
+### 🎯 Insight:
+> Job Satisfaction **khó dự đoán** → phụ thuộc yếu tố ẩn
 
-🚨 13. Data Leakage
+---
 
-📊 Visualization:
+## 🚨 13. Data Leakage
 
-Phát hiện:
+![Leakage Check](fig11_leakage_check.png)
 
-SatisfactionIndex gây leakage
+### Phát hiện:
+- `SatisfactionIndex` gây leakage
 
 👉 Đã loại bỏ để đảm bảo tính chính xác
 
-📊 14. Tổng hợp biểu đồ
+---
 
-Project tạo 12 biểu đồ:
+## 📊 14. Tổng hợp biểu đồ
 
-fig0 → Feature Engineering
-fig1 → EDA
-fig2 → Correlation
-fig3 → Clustering
-fig4 → Model Evaluation
-fig5 → Hyperparameters
-fig6 → Feature Importance
-fig7 → Semi-supervised
-fig8 → Association Rules
-fig9 → Explainability
-fig10 → Regression
-fig11 → Leakage
-💡 15. Insight Business
+| Figure | Nội dung |
+|--------|----------|
+| fig0 | Feature Engineering |
+| fig1 | EDA |
+| fig2 | Correlation |
+| fig3 | Clustering |
+| fig4 | Model Evaluation |
+| fig5 | Hyperparameters |
+| fig6 | Feature Importance |
+| fig7 | Semi-supervised |
+| fig8 | Association Rules |
+| fig9 | Model Explainability |
+| fig10 | Regression |
+| fig11 | Leakage Check |
+
+![Model Explanation](fig9_model_explanation.png)
+
+---
+
+## 💡 15. Insight Business
 
 Nhân viên dễ nghỉ việc khi:
 
-🔥 Làm thêm giờ nhiều
-💰 Lương thấp
-📉 Ít thăng tiến
-😞 Satisfaction thấp
-🎯 16. Ứng dụng thực tế
-Dự đoán nhân viên nghỉ việc
-Dashboard HR
-Hệ thống cảnh báo sớm
-Cá nhân hóa giữ chân nhân viên
-🛠️ 17. Tech Stack
-Python
-Pandas, NumPy
-Scikit-learn
-Matplotlib, Seaborn
-▶️ 18. Cách chạy project
+- 🔥 Làm thêm giờ nhiều
+- 💰 Lương thấp
+- 📉 Ít thăng tiến
+- 😞 Satisfaction thấp
+
+---
+
+## 🎯 16. Ứng dụng thực tế
+
+- Dự đoán nhân viên nghỉ việc
+- Dashboard HR
+- Hệ thống cảnh báo sớm
+- Cá nhân hóa giữ chân nhân viên
+
+---
+
+## 🛠️ 17. Tech Stack
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?logo=scikit-learn)
+![Pandas](https://img.shields.io/badge/Pandas-Data-green?logo=pandas)
+
+- Python
+- Pandas, NumPy
+- Scikit-learn
+- Matplotlib, Seaborn
+
+---
+
+## ▶️ 18. Cách chạy project
+
+```bash
 pip install -r requirements.txt
 python hr_pipeline.py
-📌 19. Kết luận
+```
+
+---
+
+## 📌 19. Kết luận
 
 Hệ thống hoàn chỉnh gồm:
 
-✅ Phân tích dữ liệu
-✅ Dự đoán
-✅ Giải thích
-✅ Hỗ trợ quyết định
+- ✅ Phân tích dữ liệu
+- ✅ Dự đoán
+- ✅ Giải thích
+- ✅ Hỗ trợ quyết định
 
 👉 Có thể mở rộng thành:
-
-Dashboard (Power BI / Streamlit)
-Web App
-HR Decision System
+- Dashboard (Power BI / Streamlit)
+- Web App
+- HR Decision System
